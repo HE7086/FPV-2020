@@ -1,0 +1,57 @@
+Lemma reverse_snoc: reverse (snoc xs y) .=. y : (reverse xs)
+    Proof by induction on List xs
+    Case []
+      To show: reverse (snoc [] y) .=. y : (reverse []) 
+      Proof
+                             reverse (snoc [] y)
+        (by def snoc)    .=. reverse [y]
+        (by def reverse) .=. snoc (reverse []) y
+        (by def reverse) .=. snoc [] y
+        (by def snoc)    .=. [y]
+        (by def reverse) .=. y : (reverse [])
+          
+      QED
+
+     Case x:xs
+      To show: reverse (snoc (x:xs) y) .=. y:(reverse (x:xs))
+      IH: reverse (snoc xs y) .=. y:(reverse xs)
+
+      Proof
+                             reverse (snoc (x:xs) y)
+        (by def snoc)    .=. reverse (x: snoc xs y)
+        (by def reverse) .=. snoc (reverse (snoc xs y)) x
+        (by IH)          .=. snoc (y:(reverse xs)) x
+
+                             y : reverse (x:xs)
+        (by def reverse) .=. y : snoc (reverse xs) x
+        (by def snoc)    .=. snoc (y:(reverse xs)) x
+
+      QED
+    QED
+
+
+Lemma: reverse (reverse xs) .=. xs
+    Proof by induction on List xs
+    Case []
+      To show: reverse (reverse []) .=. []
+
+      Proof
+                             reverse (reverse [])
+        (by def reverse) .=. reverse ([])
+        (by def reverse) .=. []
+          
+      QED
+
+    Case x:xs
+      To show: reverse (reverse (x:xs)) .=. x:xs
+      IH: reverse (reverse xs) .=. xs
+
+      Proof
+                             reverse (reverse (x:xs))
+        (by def reverse) .=. reverse (snoc (reverse xs) x)
+        (by reverse_snoc).=. x : (reverse (reverse xs))
+        (by IH)          .=. x : xs
+          
+      QED
+
+    QED
