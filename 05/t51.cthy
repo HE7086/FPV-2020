@@ -1,0 +1,16 @@
+data List a = [] | a : List a
+
+sum xs = sum_aux xs 0
+
+sum_aux [] acc = acc
+sum_aux (x:xs) acc = sum_aux xs (acc+x)
+
+[] ++ ys = ys
+(x:xs) ++ ys = x : (xs ++ ys)
+
+axiom zeroAdd: 0 + b .=. b
+axiom addZero: b + 0 .=. b
+axiom addComm: a + b .=. b + a
+axiom addAssoc: a + (b + c) .=. (a + b) + c
+
+goal sum (xs ++ ys) .=. sum xs + sum ys

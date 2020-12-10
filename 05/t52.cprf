@@ -1,0 +1,38 @@
+Lemma: sum2 xs ys .=. sum xs + sum ys 
+Proof by computation induction on xs ys with sum2
+  Case 1
+    To show: sum2 [] [] .=. sum [] + sum [] 
+
+    Proof
+                                 sum2 [] []
+      (by def sum2)          .=. 0
+      (by def sum)           .=. sum [] 
+      (by addZero)           .=. sum [] + 0
+      (by def sum)           .=. sum [] + sum []
+    QED
+
+  Case 2
+    To show: sum2 [] (y:ys) .=. sum [] + sum (y:ys) 
+    IH: sum2 ys [] .=. sum ys + sum [] 
+
+    Proof 
+                                 sum2 [] (y:ys)
+      (by def sum2)          .=. y + sum2 ys []
+      (by IH)                .=. y + (sum ys + sum [])
+      (by addAssoc)          .=. y + sum ys + sum []
+      (by def sum)           .=. sum (y:ys) + sum []
+      (by addComm)           .=. sum [] + sum (y:ys)
+    QED
+
+  Case 3
+    To show: sum2 (x:xs) ys .=. sum (x:xs) + sum ys
+    IH: sum2 xs ys .=. sum xs + sum ys
+
+    Proof 
+                                 sum2 (x:xs) ys
+      (by def sum2)          .=. x + sum2 xs ys
+      (by IH)                .=. x + (sum xs + sum ys)
+      (by addAssoc)          .=. x + sum xs + sum ys
+      (by def sum)           .=. sum (x:xs) + sum ys
+    QED
+QED
