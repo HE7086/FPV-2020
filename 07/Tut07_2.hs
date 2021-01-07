@@ -121,9 +121,10 @@ f4 = foldr ($) 0 . map ($5)
 f5 = (.)
 f6 = uncurry
 -- f7 f x y z = f z y
--- f7 f x y z = flip (f x) y z
--- f7 f x = flip (f x)
--- f7 f x = const . flip
+-- f7 f x y z = flip f y z
+-- f7 f x = flip f
+-- f7 f = const . flip f
+-- f7 = const . flip
 f7 = const . flip
 
 {-
