@@ -1,0 +1,50 @@
+module AssocList (Map, empty, insert, lookup, delete, keys, invar) where
+
+{-T12.1.1-}
+import Prelude hiding (lookup)
+import Data.List (nub)
+import Test.QuickCheck
+import Data.Maybe (isNothing)
+
+-- data Map k v = Map [(k, v)]
+newtype Map k v = Map [(k,v)]
+  deriving (Show)
+
+empty :: Map k v
+empty = Map []
+
+insert :: Eq k => k -> v -> Map k v -> Map k v
+insert k v (Map al) = Map $ ins al
+  where
+    ins [] = [(k,v)]
+    ins ((k',v') : m)
+        | k == k' = (k,v) : m
+        | otherwise = (k',v') : ins m
+
+lookup :: Eq k => k -> Map k v -> Maybe v
+lookup k (Map al) = lo al
+  where
+    lo [] = Nothing
+    lo ((k',v') : m)
+        | k == k' = Just v'
+        | otherwise = lo m
+
+delete :: Eq k => k -> Map k v -> Map k v
+delete k (Map al) = Map $ del al
+  where
+    del [] = []
+    del ((k',v') : m)
+        | k == k' = m
+        | otherwise = (k',v') : del m
+
+keys :: Map k v -> [k]
+keys (Map al) = map fst al
+
+{-T12.1.2-}
+invar :: Eq k => Map k v -> Bool
+invar (Map []) = True
+invar (Map ((k,_):xs)) = isNothing (lookup k $ Map xs) && invar (Map xs)
+-- invar (Map xs) = length (nub $ map fst xs) == length $ map fst xs
+
+instance (Eq k, Arbitrary k, Arbitrary v) => Arbitrary (Map k v) where
+  arbitrary = Map <$> (zip <$> (nub <$> arbitrary) <*> arbitrary)

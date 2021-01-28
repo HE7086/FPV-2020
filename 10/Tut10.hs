@@ -11,12 +11,12 @@ ioReadPrintInt = do
       Nothing -> putStrLn "that is not a number!"
       Just i  -> print i
 
--- ioReadPrintInt' :: IO Int
--- ioReadPrintInt' = do
---     x <- getLine
---     case readMaybe x of
---       Nothing -> error "that is not a number!"
---       Just i  -> return i
+ioReadPrintInt' :: IO Int
+ioReadPrintInt' = do
+    x <- getLine
+    case readMaybe x of
+      Nothing -> error "that is not a number!"
+      Just i  -> return i
 
 ioLoop :: (a -> Maybe b) -> IO a -> IO b
 ioLoop f act = do
