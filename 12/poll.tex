@@ -1,0 +1,237 @@
+\documentclass{beamer}
+\usepackage{xcolor}
+
+\title{Dummy Slide For Poll}
+\author{XD}
+\date{some random day}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Innermost \& Outermost}
+    An expression that can be reduced is called {\color{blue}{Redex}} 
+
+    e.g. $(4 + 1) \rightarrow 5$
+
+    \medskip
+    \textbullet \textbf{innermost}:
+    Redex contains no other redex
+
+    \medskip
+    \textbullet \textbf{outermost}:
+    Redex is not contained within another redex
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Reduction}
+    \textbullet \textbf{primitive operation}
+
+    can only be reduced if it is applied to fully evaluated arguments
+
+    \smallskip
+    $1 + (2 + 3)$ as a whole cannot be reduced
+
+    \medskip
+    \textbullet \textbf{functions}
+
+    function's reducability depends on its definition
+
+    \smallskip
+    $fst (1,2) = 1$
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    1 + {\color{red}{(2 * 3)}}
+
+    \medskip
+    innermost \& outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    {\color{red}{1 + (2 * 3)}}
+
+    \medskip
+    neither (it self as a whole is not reducible)
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    (1 + 2) + {\color{red}{(2 + 3)}}
+
+    \medskip
+    innermost \& outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    {\color{red}{(1 + 2) * (2 + 3)}}
+
+    \medskip
+    neither
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    fst (1 + 2, {\color{red}{2 + 3}})
+
+    \medskip
+    innermost \& outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    fst ({\color{red}{1 + 2}}, 2 + 3)
+
+    \medskip
+    innermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    {\color{red}{fst (1 + 2, 2 + 3)}}
+
+    \medskip
+    outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    fst (snd (1, {\color{red}{2 + 3}}), 4)
+
+    \medskip
+    innermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    fst ({\color{red}{snd (1, 2 + 3)}}, 4)
+
+    \medskip
+    neither
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    {\color{red}{fst (snd (1, 2 + 3), 4)}}
+
+    \medskip
+    outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    (\textbackslash x $\rightarrow$ 1 + x)(2 * 3)
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    (\textbackslash x $\rightarrow$ 1 + x){\color{red}{(2 * 3)}}
+    
+    \medskip
+    innermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    {\color{red}{(\textbackslash x $\rightarrow$ 1 + x)(2 * 3)}}
+
+    \medskip
+    outermost
+\end{frame}
+
+\begin{frame}
+    \frametitle{Redexes}
+    (\textbackslash x $\rightarrow$ (1 + 2) + x)
+
+    \medskip
+    lambda expressions are different.
+
+    In general, one cannot reduce inside it
+
+    even if it's quite obvious, like 1+2 in this case
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Why do we care about those?}
+    Definition:
+    loop = tail loop
+    
+    \medskip
+
+    \begin{verbatim}
+    Innermost reduction:
+    fst (1,loop) = fst(1,tail loop)
+                 = fst(1,tail(tail loop))
+                 = ...
+    \end{verbatim}
+
+    \medskip
+
+    \begin{verbatim}
+    Outermost reduction:
+    fst (1,loop) = 1
+    \end{verbatim}
+
+    \medskip
+    Outermost reduction terminates as often as possible
+
+    \medskip
+    (see lecture slides p346)
+\end{frame}
+
+\begin{frame}
+    \frametitle{exkurs: Weak Head Normal Form}
+    \href{https://wiki.haskell.org/Weak_head_normal_form}{https://wiki.haskell.org/Weak\_head\_normal\_form}
+
+    In order to evaluate an expression, it must be first evaluated to its WHNF.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{exkurs: Weak Head Normal Form}
+    consider the following expression:
+
+    \begin{verbatim}
+    inf :: Eq a => [a]
+    inf = inf
+
+    (==) :: Eq a => [a] -> [a] -> Bool
+    [] == [] = True
+    (x : xs) == (y : ys) = x == y && xs == ys
+    _ == _ = False
+    \end{verbatim}
+
+    what happens if we call:
+
+    \begin{verbatim}
+    inf == inf
+    \end{verbatim}
+
+    True? False? not terminating? throw exception?
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{exkurs: Weak Head Normal Form}
+    'inf' will first be evaluated to its WHNF, but none of the case matches([] or (x:xs)), so the definition of inf is applied:
+
+    inf = inf
+
+    \begin{verbatim}
+    inf == inf
+    (inf <evaluated by definition> inf) == inf
+    inf == inf
+    ... (not terminating)
+    \end{verbatim}
+
+    and it won't terminate
+
+\end{frame}
+
+
+
+\end{document}
