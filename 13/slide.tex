@@ -1,0 +1,136 @@
+\documentclass{beamer}
+\usepackage{xcolor}
+
+\title{Tail Recursion}
+\author{XD}
+\date{some random day}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}[fragile]
+    \frametitle{Tail Recursion}
+    A recursive function is \textbf{tail-recursive}, when the final result of the recursive call is directly the result of the whole recursive function.
+
+    \medskip
+    \textbullet \textbf{Not Tail-Recursive}:
+    \begin{verbatim}
+    sum [] = 0
+    sum (x:xs) = x + sum xs
+    \end{verbatim}
+
+    \medskip
+    \textbullet \textbf{Tail-Recursive}:
+    \begin{verbatim}
+    sum xs = help 0 xs
+        where help acc [] = acc
+              help acc (x:xs) = help (acc + x) xs
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Tail Recursion}
+    A tail recursive function {\color{red}{can}} be optimized to avoid building up stack frames. Depenging on the support/option of the compiler, the result may vary.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Stack Frame}
+    \begin{verbatim}
+    sum [] = 0
+    sum (x:xs) = x + sum xs
+    \end{verbatim}
+
+    \medskip
+    \begin{verbatim}
+    sum [5,4,3,2,1]
+    = 5 + sum [4,3,2,1]
+    = 5 + (4 + sum [3,2,1])
+    = 5 + (4 + (3 + sum [2,1]))
+    = 5 + (4 + (3 + (2 + sum [1])))
+    = 5 + (4 + (3 + (2 + (1 + sum []))))
+    = 5 + (4 + (3 + (2 + (1 + 0))))
+    = 5 + (4 + (3 + (2 + 1)))
+    = ...
+    = 15
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Stack Frame}
+    When Optimized:
+    \begin{verbatim}
+    sum xs = help 0 xs
+        where help acc [] = acc
+              help acc (x:xs) = help (acc + x) xs
+    \end{verbatim}
+
+    \medskip
+    \begin{verbatim}
+    sum [5,4,3,2,1]
+    = help 0 [5,4,3,2,1]
+    = help 5 [4,3,2,1]
+    = help 9 [3,2,1]
+    = help 12 [2,1]
+    = help 14 [1]
+    = help 15 []
+    = 15
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Only When Optimized}
+    You \textbf{must} turn on the option of the compiler in order for Tail Recursion being optimized. Otherwise it will behave just like normal functions.
+
+    Of course the compiler/executor itself must also support that. 
+
+    Java's JVM for example does not support this.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Tail Recursion in Haskell}
+    When dealing with lazy evaluated languages, we can't just assume that code will behave the same way as it does in a strict language.
+
+    In Haskell, the function call model is a little different, function calls might not use a new stack frame, so making a function tail-recursive typically isn't as big a deal.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Tail Recursion in C++}
+
+    \textbullet \textbf{Not Tail-Recursive}:
+    \begin{verbatim}
+    int sum(int n) {
+        if (n == 0) return 0;
+        return n + sum(n - 1);
+    }
+    \end{verbatim}
+
+    \medskip
+    \textbullet \textbf{Tail-Recursive}:
+    \begin{verbatim}
+    int sum(int n, int acc = 0) {
+        if (n == 0) return acc;
+        return sum(n - 1, acc + n);
+    }
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Tail Recursion in C++}
+
+    When you turn on the optimization, both will be equivalent to:
+
+    \medskip
+    \begin{verbatim}
+    int sum(int n) {
+        int result = 0;
+        for (int i = 0; i <= n; ++i) {
+            result += i;
+        }
+        return result;
+    }
+    \end{verbatim}
+
+    Yes, essentially they are just for-loops
+\end{frame}
+
+\end{document}
